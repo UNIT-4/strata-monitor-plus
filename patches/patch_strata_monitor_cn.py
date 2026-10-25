@@ -59,6 +59,7 @@ def patch(path, pairs, label):
 
 # ---------------- index.html 静态文字 ----------------
 HTML = [
+    ('`${health.model} runs on this PC. Nothing leaves it.`', '`${health.model} 在本机运行，数据绝不出门。`'),
     ('<span id="pill-text">Connecting&hellip;</span>', '<span id="pill-text">连接中…</span>'),
     ('title="Light / dark" aria-label="Switch between light and dark"', 'title="明暗主题" aria-label="切换明暗主题"'),
     ('aria-label="Views"', 'aria-label="视图"'),

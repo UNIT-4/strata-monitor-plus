@@ -4,6 +4,9 @@
 
 为中文用户打造。零第三方依赖（Python 标准库 + Strata 自带运行时），不修改模型与推理行为，可随 Strata 升级一键重放。
 
+> **看视频了解一切（78 秒，带中文讲解）**：<https://github.com/UNIT-4/strata-monitor-plus/releases/download/v1.0/demo.mp4>
+
+
 ## 功能
 
 | 补丁 | 功能 | 生效方式 |
@@ -40,6 +43,10 @@ python apply.py D:\strata\Strata   # 或显式指定（含 serve 子目录的那
 ## 版本适配
 
 在 Strata **v0.2.3.1 / engine 0.1.48** 上开发与实测（Windows）。槽位可视化依赖官方 `/metrics` 的 `live.slots` 字段（0.2.x 均输出）；其余补丁不依赖特定版本。
+
+## 演示
+
+78 秒中文讲解视频（Releases 附件，点击即播/可下载）：<https://github.com/UNIT-4/strata-monitor-plus/releases/download/v1.0/demo.mp4>
 
 ## 许可
 
