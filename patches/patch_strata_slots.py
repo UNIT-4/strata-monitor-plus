@@ -57,10 +57,9 @@ JS = '''
       card.hidden = false;
       var busyN = 0;
       for (var i = 0; i < slots.length; i++) if (slots[i].state !== "idle") busyN++;
-      var bits = [busyN + "/" + slots.length + " 槽活跃"];
-      if (live.waiting) bits.push("排队 " + live.waiting);
-      if (live.outside_slots > 0) bits.push("外部 " + live.outside_slots);
-      if (live.running) bits.push("在跑 " + live.running);
+      // 汇总行固定显示全部计数（含 0），避免有无计数交替导致闪烁
+      var bits = [busyN + "/" + slots.length + " 槽活跃", "排队 " + (live.waiting || 0),
+                  "外部 " + (live.outside_slots || 0), "在跑 " + (live.running || 0)];
       sum.textContent = bits.join(" · ");
       var html = slots.map(function (s) {
         var tone = s.state === "idle" ? "var(--st-ink-muted)" : (s.state === "reading" ? "#378add" : "#e0863a");
@@ -79,19 +78,23 @@ JS = '''
           + '<span class="muted" style="font-size:12px">' + esc(extra.join(" · ")) + '</span></div>'
           + (pct != null ? '<div style="margin-top:5px">' + bar(pct, "#378add") + '</div>' : "") + '</div>';
       }).join("");
-      if ((live.outside_slots || 0) > 0) {
-        var sTone = live.state === "reading" ? "#378add" : "#e0863a";
-        var sBits = [];
+      // 快车道行：固定渲染、永不增删（无外部请求时显示待命占位），杜绝面板跳动
+      var outside = (live.outside_slots || 0) > 0;
+      var sTone = outside ? (live.state === "reading" ? "#378add" : "#e0863a") : "var(--st-ink-muted)";
+      var sBits = [];
+      if (outside) {
         if (live.generated != null) sBits.push("已生成 " + live.generated);
         if (live.tok_s != null) sBits.push((+live.tok_s).toFixed(1) + " tok/s");
         if (live.elapsed_s != null) sBits.push(live.elapsed_s + "s");
-        var sDot = '<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:' + sTone + ';margin-right:6px"></span>';
-        var sState = live.state === "reading" ? "读入提示词" : live.state === "generating" ? "生成中" : "活跃";
-        html = '<div style="border:1px solid var(--st-line);border-radius:9px;padding:7px 11px;border-left:3px solid ' + sTone + '">'
-          + '<div style="display:flex;justify-content:space-between;gap:10px;font-size:13px">'
-          + '<span>' + sDot + '快车道 · 独占直通 · ' + sState + '</span>'
-          + '<span class="muted" style="font-size:12px">' + sBits.join(" · ") + ' · 不在槽内（引擎最快路径，第二请求到来时自动让位进槽）</span></div></div>' + html;
+      } else {
+        sBits.push("无外部请求 · 待命");
       }
+      var sDot = '<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:' + sTone + ';margin-right:6px"></span>';
+      var sState = outside ? (live.state === "reading" ? "读入提示词" : live.state === "generating" ? "生成中" : "活跃") : "待命";
+      html = '<div style="border:1px solid var(--st-line);border-radius:9px;padding:7px 11px;border-left:3px solid ' + sTone + '">'
+        + '<div style="display:flex;justify-content:space-between;gap:10px;font-size:13px">'
+        + '<span>' + sDot + '快车道 · 独占直通 · ' + sState + '</span>'
+        + '<span class="muted" style="font-size:12px">' + sBits.join(" · ") + (outside ? ' · 不在槽内（引擎最快路径，第二请求到来时自动让位进槽）' : ' · 外部请求到来时走此独占直通') + '</span></div></div>' + html;
       rows.innerHTML = html;
     }).catch(function () { });
   }

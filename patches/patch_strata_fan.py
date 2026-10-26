@@ -5,6 +5,7 @@
 安全：≥88°C 强制满速、≥83°C 自定义至少90%、Strata 退出自动交还驱动、状态存 fan_state.json 重启恢复
 依赖前置补丁：patch_strata_monitor_cn.py（先中文化再打本补丁，本补丁自带中文）
 """
+import re
 import os
 import sys
 
@@ -326,18 +327,32 @@ def patch(path, pairs, label):
     ok = skip = miss = 0
     for old, new in pairs:
         if new in s:
-            skip += 1
+            skip += 1                     # 已打过（含 old 是 new 前缀的追加式替换）
             continue
         n = s.count(old)
-        if n != 1:
-            print(f"  [MISS x{n}] {label}: {old[:60]!r}")
+        if n == 0:                        # 弹性匹配：连续空白等价（上游只改换行缩进时仍命中）
+            pat = re.compile("\\s+".join(re.escape(p) for p in old.split()) if old.strip() else old)
+            hits = list(pat.finditer(s))
+            if len(hits) == 1:
+                s = s[:hits[0].start()] + new + s[hits[0].end():]
+                ok += 1
+                continue
+            if len(hits) > 1:
+                print(f"  [DUP {len(hits)}] {label}: 弹性匹配多处 -> {old[:60]!r}")
+                miss += 1
+                continue
+            print(f"  [MISS] {label}: 未找到 -> {old[:70]!r}")
+            miss += 1
+            continue
+        if n > 1:
+            print(f"  [DUP {n}] {label}: 多处出现 -> {old[:70]!r}")
             miss += 1
             continue
         s = s.replace(old, new)
         ok += 1
     with open(path, "w", encoding="utf-8", newline="") as f:
         f.write(s)
-    print(f"[{label}] 替换 {ok}，跳过 {skip}，未命中 {miss}")
+    print(f"[{label}] 替换 {ok}，跳过(已是中文/已打) {skip}，未命中 {miss}")
     return miss == 0
 
 def main():

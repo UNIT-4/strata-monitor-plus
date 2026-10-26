@@ -42,12 +42,22 @@ def patch(path, pairs, label):
             skip += 1                     # 已打过（含 old 是 new 前缀的追加式替换）
             continue
         n = s.count(old)
-        if n == 0:
+        if n == 0:                        # 弹性匹配：连续空白等价（上游只改换行缩进时仍命中）
+            pat = re.compile("\\s+".join(re.escape(p) for p in old.split()) if old.strip() else old)
+            hits = list(pat.finditer(s))
+            if len(hits) == 1:
+                s = s[:hits[0].start()] + new + s[hits[0].end():]
+                ok += 1
+                continue
+            if len(hits) > 1:
+                print(f"  [DUP {len(hits)}] {label}: 弹性匹配多处 -> {old[:60]!r}")
+                miss += 1
+                continue
             print(f"  [MISS] {label}: 未找到 -> {old[:70]!r}")
             miss += 1
             continue
         if n > 1:
-            print(f"  [DUP {n}] {label}: 多处出现，用更长上下文重试 -> {old[:70]!r}")
+            print(f"  [DUP {n}] {label}: 多处出现 -> {old[:70]!r}")
             miss += 1
             continue
         s = s.replace(old, new)
@@ -59,7 +69,6 @@ def patch(path, pairs, label):
 
 # ---------------- index.html 静态文字 ----------------
 HTML = [
-    ('`${health.model} runs on this PC. Nothing leaves it.`', '`${health.model} 在本机运行，数据绝不出门。`'),
     ('<span id="pill-text">Connecting&hellip;</span>', '<span id="pill-text">连接中…</span>'),
     ('title="Light / dark" aria-label="Switch between light and dark"', 'title="明暗主题" aria-label="切换明暗主题"'),
     ('aria-label="Views"', 'aria-label="视图"'),
@@ -158,6 +167,28 @@ HTML = [
 
 # ---------------- app.js 动态文字 ----------------
 APP = [
+    # —— 0.2.6 会话缓存卡漏翻补全（老板 2026-10-26 反馈）——
+    ('"Parked / restored"', '"暂存 / 恢复"'),
+    ('\"Last request\"', '\"上一次请求\"'),
+    ('"Reused since start"', '"自启动累计复用"'),
+    ('"The engine keeps the last conversation\'s state, so a follow-up reads only what is new. To keep several conversations (agents taking turns), add \\"--conversation-cache-mib\\", \\"8192\\" to the run config\'s args (docs/DETAILS.md)."',
+     '"引擎会保留最近一轮会话状态，追问只需读入新增部分。如需同时保留多个会话（多智能体轮转），在运行配置 args 中加入 \\"--conversation-cache-mib\\", \\"8192\\"（见 docs/DETAILS.md）。"'),
+    ('"A request that continues a parked conversation gets its state back instead of reading it again; the oldest goes when the slots or the memory are full."',
+     '"继续已暂存会话的请求会直接换回其状态，无需重新预填充；槽位或内存不足时最先暂退最旧的会话。"'),
+    ('"Last switch"', '"最近一次换入"'),
+    ('`${fmt(c.requests_reused)} of ${fmt(c.requests)} requests reused part of their prompt`',
+     '`${fmt(c.requests_reused)} / ${fmt(c.requests)} 个请求复用了部分提示词`'),
+    ('`${c.last_event === "parked" ? "Parked" : "Restored"} ${fmt(c.last_tokens)} tokens, ${since(c.last_at)}`',
+     '`${c.last_event === "parked" ? "已暂存" : "已恢复"} ${fmt(c.last_tokens)} token · ${since(c.last_at)}`'),
+    ('${fmt(c.evictions)} evicted', '${fmt(c.evictions)} 次清除'),
+    ('`${fmt(c.last_reused || 0)} of ${fmt(c.last_prompt)} prompt tokens reused`',
+     '`${fmt(c.last_reused || 0)} / ${fmt(c.last_prompt)} 提示词 token 已复用`'),
+    ('`${fmt(c.reused_tokens)} tokens${share}`', '`${fmt(c.reused_tokens)} token${share}`'),
+    ('` (${fmt((100 * c.reused_tokens) / c.prompt_tokens)}% of all prompt tokens)`',
+     '`（占全部提示词 ${fmt((100 * c.reused_tokens) / c.prompt_tokens)}%）`'),
+    ('"A request that continues a parked conversation gets its state back instead of reading it again; the oldest goes when the slots or the memory are full."',
+     '"继续已暂存会话的请求会直接换回其状态，无需重新预填充；槽位或内存不足时最先暂退最旧的会话。"'),
+    ('`${health.model} runs on this PC. Nothing leaves it.`', '`${health.model} 在本机运行，数据绝不出门。`'),
     ('label: "Speed", icon: "gauge"', 'label: "速度", icon: "gauge"'),
     ('label: "GPU load", icon: "gpu"', 'label: "GPU 负载", icon: "gpu"'),
     ('label: "VRAM", icon: "layers"', 'label: "显存", icon: "layers"'),

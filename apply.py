@@ -21,6 +21,7 @@ PATCHES = [
     "patches/patch_strata_fan.py",
     "patches/patch_strata_slots.py",
     "patches/patch_strata_cfg_cn.py",
+    "patches/patch_strata_i18n.py",
 ]
 REL_TARGETS = [
     os.path.join("serve", "server.py"),

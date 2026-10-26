@@ -6,7 +6,7 @@ import os
 SRC = r"G:\本地LLM建设\strata_test"
 DST = r"G:\本地LLM建设\strata-monitor-plus\patches"
 FILES = ["patch_strata_monitor_cn.py", "patch_strata_fan.py",
-         "patch_strata_slots.py", "patch_strata_cfg_cn.py"]
+         "patch_strata_slots.py", "patch_strata_cfg_cn.py", "patch_strata_i18n.py"]
 
 ROOT_BLOCK = r'''
 # ---- 路径自适应：命令行参数 > 环境变量 STRATA_ROOT > 常见位置探测 ----
