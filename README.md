@@ -1,10 +1,23 @@
 # Strata Monitor Plus
 
-为 [Strata](https://github.com/Niko1221/Strata) 的 Web 监控面板增色的本地补丁集：**多语言界面（中文/English/Español/Português）+ 网络流量监控 + 显卡风扇控制 + 并发槽位可视化**。
+为 [Strata](https://github.com/Niko1221/Strata) 的 Web 监控面板增色的本地补丁集：**多语言界面（9 语言）+ 网络流量监控 + 显卡风扇控制 + 并发槽位可视化**。
 
 零第三方依赖（Python 标准库 + Strata 自带运行时），不修改模型与推理行为，可随 Strata 升级一键重放。
 
-> **看视频了解一切（78 秒，带中文讲解）**：<https://github.com/UNIT-4/strata-monitor-plus/releases/download/v1.0/demo.mp4>
+> **📺 Demo video (78 s, Chinese narration)**：<https://github.com/UNIT-4/strata-monitor-plus/releases/download/v1.0/demo.mp4>
+
+<details open><summary><b>In your language / Dans votre langue / 日本語で</b></summary>
+
+- **English** — Local patch set for the Strata web panel: full UI localization into 9 languages (one-click pill, zero-flash write-time translation), live network up/down cards, in-page NVIDIA fan control (thermal modes + 88 °C guard), and a parallel-slot monitor for batch serving. Pure stdlib Python, idempotent, re-apply after every Strata upgrade with one command.
+- **Español** — Conjunto de parches locales para el panel web de Strata: interfaz en 9 idiomas (traducción en tiempo de escritura, sin parpadeos), tarjetas de red en vivo, control del ventilador NVIDIA en la página y monitor de ranuras paralelas. Python puro, idempotente; se reaplica con un comando tras cada actualización.
+- **Português** — Conjunto de patches locais para o painel web do Strata: interface em 9 idiomas (tradução no ato da escrita, sem piscar), cartões de rede ao vivo, controle da ventoinha NVIDIA na página e monitor de slots paralelos. Python puro, idempotente; reaplique com um comando após cada atualização.
+- **Français** — Jeu de patchs local pour le panneau web Strata : interface en 9 langues (traduction à l'écriture, sans scintillement), cartes réseau en direct, contrôle du ventilateur NVIDIA intégré, moniteur de slots parallèles. Python pur, idempotent ; à rejouer en une commande après chaque mise à niveau.
+- **Deutsch** — Lokaler Patch-Satz für das Strata-Webpanel: UI in 9 Sprachen (Übersetzung beim Schreiben, kein Flackern), Live-Netzwerkkarten, GPU-Lüftersteuerung auf der Seite, parallele Slot-Überwachung. Nur Python-Standardbibliothek, idempotent; nach jedem Upgrade mit einem Befehl erneut anwenden.
+- **日本語** — Strata Web パネル向けローカルパッチ：9 言語対応（書き込み時翻訳でちらつきゼロ）、ネットワーク送受信カード、ページ内 GPU ファン制御、並列スロット表示。標準ライブラリのみ、冪等、アップグレード後に一発再適用。
+- **한국어** — Strata 웹 패널용 로컬 패치 모음: 9개 언어 UI(쓰기 시 번역, 깜빡임 없음), 실시간 네트워크 카드, 페이지 내 GPU 팬 제어, 병렬 슬롯 모니터. 순수 표준 라이브러리, 멱등, 업그레이드 후 한 명령 재적용.
+- **Русский** — Локальный набор патчей для веб-панели Strata: интерфейс на 9 языках (перевод при записи, без мерцания), карточки сетевого трафика, управление вентилятором NVIDIA на странице, монитор параллельных слотов. Только стандартная библиотека, идемпотентно; повторное применение одной командой после апгрейда.
+
+</details>
 
 ## 🌐 多语言界面 / Languages
 
