@@ -8,23 +8,19 @@
 
 ## 🌐 多语言界面 / Languages
 
-安装后，页面右上角出现语言下拉框（主题按钮旁），**中文 / English / Español / Português** 一键切换，选择自动记住。默认中文。
-After installing, a language picker appears at the top-right — switch between 中文, English, Español and Português instantly; your choice is remembered.
+安装后，状态胶囊左侧出现**同款样式的语言胶囊**：**中文 / English / Español / Português / Français / Deutsch / 日本語 / 한국어 / Русский** 九语一键切换，选择自动记住（也可用 `?lang=ja` 等 URL 参数强制）。默认中文。
+After installing, a language pill appears left of the status pill — nine languages, one click; your choice is remembered.
 
-| 🇨🇳 中文 | 🇬🇧 English |
-|---|---|
-| ![zh](docs/screens/monitor-zh.png) | ![en](docs/screens/monitor-en.png) |
-| 🇪🇸 Español | 🇵🇹 Português |
-| ![es](docs/screens/monitor-es.png) | ![pt](docs/screens/monitor-pt.png) |
+![9 languages](docs/screens/grid9.png)
 
-实现方式：编译期整句替换（中文，性能零损耗）+ 运行时 i18n 引擎（其他语言，含动态内容与属性翻译，250ms 防抖 MutationObserver）。新增一种语言 = 往 `i18n.js` 的 `LANGS` 里加一张"中文→目标语言"词典，欢迎 PR。
+实现方式：编译期整句替换（中文，性能零损耗）+ 运行时两阶段 i18n 引擎（zh→en→目标语言，含动态内容与属性翻译，250ms 防抖 MutationObserver，缺词自动回落英文）。新增一种语言 = 往 `i18n.js` 的 `DICTS` 里加一张"英文→目标语言"词典，欢迎 PR。
 
 ## 功能
 
 | 补丁 | 功能 | 生效方式 |
 |---|---|---|
 | `patch_strata_monitor_cn.py` | 面板完整中文化（聊天/监控/关于/采样抽屉 200+ 处）；监控页新增「网络上行/下行」实时卡片 | 前端刷新即生效；网络卡片需重启 Strata |
-| `patch_strata_i18n.py` | 语言选择下拉（中文/English/Español/Português），运行时翻译引擎，动态文本全覆盖 | 刷新即生效 |
+| `patch_strata_i18n.py` | 语言胶囊（9 语言：中英西葡法德日韩俄），两阶段运行时翻译引擎，动态文本全覆盖，缺词回落英文 | 刷新即生效 |
 | `patch_strata_fan.py` | 监控页内嵌「显卡风扇」控制卡：系统默认 / 中等(温控曲线) / 激进 / 自定义滑块(30-100%)。88°C 强制满速、83°C 警戒拉升、Strata 退出自动交还驱动、设置持久化重启恢复 | 需重启 Strata |
 | `patch_strata_slots.py` | 「并发槽位」卡：每槽状态/进度/tok/s、空闲槽暂存 token 数、排队与准入计数；「快车道·独占直通」行固定渲染防布局闪烁 | 刷新即生效（需双并发 `parallel/batch` 模式启动） |
 | `patch_strata_cfg_cn.py` | 关于页「模型设置」表单 16 字段中文化（含开/关、default 等选项） | 刷新即生效 |
